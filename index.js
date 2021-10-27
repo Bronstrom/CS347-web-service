@@ -1,6 +1,7 @@
 const fs = require('fs');
 const mysql = require('mysql');
 const express = require('express');
+
 // Start up service & add middleware for unpackaging large JSON bodies
 const service = express();
 service.use(express.json());
@@ -35,28 +36,6 @@ function rowToPhoto(row) {
   }
 }
 
-/* TODO: REMOVE these samples below*/
-// Grab photos in database if existant
-/*const selectQuery = 'SELECT * FROM photo';
-connection.query(selectQuery, (error, rows) => {
-  if (error) {
-    console.error(error);
-  } else {
-    const photos = rows.map(rowToPhoto);
-    console.log(rows);
-  }
-});*/
-
-// Insert a photo into database
-/*const insertQuery = 'INSERT INTO photo(year, month, day, imgName, imgDesc, imgLink) VALUES (?, ?, ?, ?, ?, ?)';
-connection.query(insertQuery, (error, rows) => {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log(rows);
-  }
-});*/
-
 
 /* Endpoints */
 
@@ -67,7 +46,8 @@ service.get('/photos/:month/:day', (request, response) => {
     parseInt(request.params.day),
   ];
 
-  const query = 'SELECT * FROM photo WHERE month = ? AND day = ? AND is_deleted = 0 ORDER BY year DESC';
+  // TODO: ADD IS DELETE
+  const query = 'SELECT * FROM photo WHERE month = ? AND day = ? ORDER BY year DESC';
   // Grab photos in database if existant
   connection.query(query, parameters, (error, rows) => {
     if (error) {
@@ -86,7 +66,7 @@ service.get('/photos/:month/:day', (request, response) => {
   });
 });
 
-// Insert
+// Insert/Post
 service.post('/photos', (request, response) => {
   if (request.body.hasOwnProperty('year') &&
       request.body.hasOwnProperty('month') &&
@@ -128,13 +108,31 @@ service.post('/photos', (request, response) => {
   }
 });
 
+// Hard delete
+service.delete('/photos/:id', (request, response) => {
+  const parameters = [parseInt(request.params.id)];
+
+  // TODO: Implement "... photo SET is_deleted = 1 ..."
+  const query = 'DELETE FROM photo WHERE id = ?';
+  connection.query(query, parameters, (error, result) => {
+    if (error) {
+      response.status(404);
+      response.json({
+        ok: false,
+        results: error.message,
+      });
+    } else {
+      response.json({
+        ok: true,
+      });
+    }
+  });
+});
+
 
 // Listen to chosen port
-const port = 8443;
+const port = 5001;
 service.listen(port, () => {
   console.log(`We're live on port: ${port}!`);
 });
 
-/* TODO: Remove, we don't want connection to close like this*/
-// Close connection to database
-/*connection.end();*/

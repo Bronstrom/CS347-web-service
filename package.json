@@ -10,5 +10,16 @@
   "dependencies": {
     "express": "^4.17.1",
     "mysql": "^2.18.1"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bronstrom/CS347-web-service.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Bronstrom/CS347-web-service/issues"
+  },
+  "homepage": "https://github.com/Bronstrom/CS347-web-service#readme"
 }
