@@ -48,6 +48,51 @@
     <li>
       <b>You will store your app’s data long-term in an SQL-based relational database like MySQL. (Despite using a relational database, your database need not have multiple tables.)</b>
       Express has been configured into this project from the beginning.
+    </li>
+    <li>
+      <b>Your web service will be available via https://project2.YOUR-DOMAIN-NAME:8443/.</b>
+      The web service is viewable through the suggested link: <a href="https://project2.bradfell.me:8443/">https://project2.bradfell.me:8443/</a>.
+    </li>
+    <li>
+      <b>The endpoints of the web service and any parameters must be appropriately named.</b>
+      The endpoints are named in relation to the project and follow common web service etiquette. See the full list of endpoints at the top of this page.
+    </li>
+    <li>
+      <b>The web service must send and receive complex data as JSON.</b>
+      The web service suports the given prompt - sending and receiving Ufotomi media through JSON format.
+    </li>
+    <li>
+      <b>The full spectrum of CRUD operations must be supported.</b>
+    </li>
+    <li>
+      <b>The database must only be directly accessible from within your droplet, and not from outside. Use ufw to block all ports but the ones you need for SSH and your allowed web servers.</b>
+    </li>
+    <li>
+      <b>You will create an Nginx server that allows global, encrypted access to your web service.</b>
+      Ufotomi was set-up with Nginx in mind and all traffic is redirected to encrypted access accordingly with Nginx.
+    </li>
+    <li>
+      <b>The web service must support cross-origin resource sharing using custom middleware and an options wildcard endpoint.</b>
+    </li>
+    <li>
+      <b>Your web service must be started using a process manager like pm2 so that it stays running.</b>
+      pm2 manages this project making sure it's consistently running.
+    </li>
+    <li>
+      <b>Your service must be stored in a Git repository that you have shared with your instructor. On GitHub, GitLab, and Bitbucket, share with the user twodee.</b>
+      The project is stored in the Git repository: <a href="https://github.com/Bronstrom/CS347-web-service">Bronstrom/CS347-web-service</a> and added twodee (Chris Johnson) as a collaborator.
+    </li>
+    <li>
+      <b>Your database’s creation and schema scripts must be included in your repository. Passwords must not be included.</b>
+    </li>
+    <li>
+      <b>Your Git repository should show a steady flow of commits over the course of the project. Committing and pushing should happen steadily, after each work session, and not just right before the due date.</b>
+      Commits have been spread out over the course of days, and not just before the due date
+    </li>
+    <li>
+      <b>Have your service respond to https://project2.YOUR-DOMAIN-NAME/report.html by sending back an HTML page with brief report containing an itemized breakdown of how you believe you have met the expectations listed above.</b>
+      If you're reading this on <a href="https://project2.bradfell.me/report">https://project2.bradfell.me/report</a>, then this part works as intended.
+    </li>
   </ol>
 
 </body>

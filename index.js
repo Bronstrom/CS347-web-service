@@ -37,7 +37,9 @@ function rowToPhoto(row) {
 }
 
 
-/* Endpoints */
+
+/* ENDPOINTS */
+
 
 // Select/Get
 service.get('/photos/:month/:day', (request, response) => {
@@ -65,6 +67,7 @@ service.get('/photos/:month/:day', (request, response) => {
     }
   });
 });
+
 
 // Insert/Post
 service.post('/photos', (request, response) => {
@@ -108,6 +111,35 @@ service.post('/photos', (request, response) => {
   }
 });
 
+
+// Update
+service.patch('/photos/:id', (request, response) => {
+  const parameters = [
+    request.body.year,
+    request.body.month,
+    request.body.day,
+    request.body.imgName,
+    request.body.imgLink,
+    request.body.imgDesc,
+  ];
+
+  const query = 'UPDATE photo SET year = ?, month = ?, day = ?, imgName = ?, imgLink = ?, imgDesc = ?';
+  connection.query(query, parameters, (error, result) => {
+    if (error) {
+      response.status(404);
+      response.json({
+        ok: false,
+        results: error.message,
+      });
+    } else {
+      response.json({
+        ok: true,
+      });
+    }
+  });
+});
+
+
 // Hard delete
 service.delete('/photos/:id', (request, response) => {
   const parameters = [parseInt(request.params.id)];
@@ -128,6 +160,7 @@ service.delete('/photos/:id', (request, response) => {
     }
   });
 });
+
 
 
 // Listen to chosen port
