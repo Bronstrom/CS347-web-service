@@ -19,10 +19,13 @@
   <p>Endpoints:
     <ul>
       <li>
-	GET   /photos/:month/:day - returns photos found on the given month and day. Entries are ordered by year
+	GET	/photos/:month/:day - returns photos found on the given month and day. Entries are ordered by year
       </li>
       <li>
-	POST   /photos - adds a word with the given identification options (year, month, day, image name, image source/link, and the image description
+	POST	/photos - adds a word with the given identification options (year, month, day, image name, image source/link, and the image description
+      </li>
+      <li>
+	PATCH	/photos/:id - updates a word with the given identification options
       </li>
       <li>
 	DELETE   /photos/:id - removes a photo based on the given ID (HARD DELETE)
@@ -63,9 +66,11 @@
     </li>
     <li>
       <b>The full spectrum of CRUD operations must be supported.</b>
+      Ufotomi has the full support for CRUD operations - GET, POST, PATCH, and DELETE. See the full list of available endpoint at the top of this page.
     </li>
     <li>
       <b>The database must only be directly accessible from within your droplet, and not from outside. Use ufw to block all ports but the ones you need for SSH and your allowed web servers.</b>
+    Outside clients are blocked with the Linux firewall: Uncomplicated Firewall (ufw). Traffic is allowed through the ports Apache and Nginx listen to: 22, 80, 443, and 8443.
     </li>
     <li>
       <b>You will create an Nginx server that allows global, encrypted access to your web service.</b>
@@ -90,8 +95,8 @@
       Commits have been spread out over the course of days, and not just before the due date
     </li>
     <li>
-      <b>Have your service respond to https://project2.YOUR-DOMAIN-NAME/report.html by sending back an HTML page with brief report containing an itemized breakdown of how you believe you have met the expectations listed above.</b>
-      If you're reading this on <a href="https://project2.bradfell.me/report">https://project2.bradfell.me/report</a>, then this part works as intended.
+      <b>Have your service respond to https://project2.YOUR-DOMAIN-NAME:8443/report.html by sending back an HTML page with brief report containing an itemized breakdown of how you believe you have met the expectations listed above.</b>
+      If you're reading this on <a href="https://project2.bradfell.me:8443/report.html">https://project2.bradfell.me:8443/report.html</a>, then this part works as intended.
     </li>
   </ol>
 

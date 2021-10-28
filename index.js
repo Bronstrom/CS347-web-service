@@ -162,6 +162,13 @@ service.delete('/photos/:id', (request, response) => {
 });
 
 
+// Provide report through GET endpoint
+service.get('/report.html', (request, response) => {
+    response.sendFile("/home/brad/CS347-web-service/report.html");
+});
+
+
+
 
 // Listen to chosen port
 const port = 5001;
