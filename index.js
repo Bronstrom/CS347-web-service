@@ -41,7 +41,7 @@ function rowToPhoto(row) {
     nice:	row.nice,
     meh: 	row.meh,
     boo:	row.boo,
-   is_deleted:  row.is_deleted;
+    is_deleted: row.is_deleted,
   }
 }
 
