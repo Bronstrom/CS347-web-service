@@ -60,6 +60,8 @@ service.options('*', (request, response) => {
 
 // Select/Get ALL photos
 service.get('/photos', (request, response) => {
+  const parameters = [];
+  
   const query = 'SELECT * FROM photo WHERE is_deleted = 0 ORDER BY year DESC, month DESC, day DESC';
   // Grab photos in database if existant
   connection.query(query, parameters, (error, rows) => {
@@ -226,15 +228,16 @@ service.delete('/photos/:id', (request, response) => {
   });
 });
 
-// Hard delete - requests month & day to ensure user wants to delete
-service.delete('/photos/:id/:month/:day', (request, response) => {
+// Hard delete - requests month, day & year to ensure user wants to delete
+service.delete('/photos/:id/:month/:day/:year', (request, response) => {
   const parameters = [
 	parseInt(request.params.id),
+	parseInt(request.params.year),
   	parseInt(request.params.month),
 	parseInt(request.params.day),
   ];
 
-  const query = 'DELETE FROM photo WHERE id = ?';
+  const query = 'DELETE FROM photo WHERE id = ? AND year = ? AND month = ? AND day = ?';
   connection.query(query, parameters, (error, result) => {
     if (error) {
       response.status(404);

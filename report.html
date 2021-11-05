@@ -12,107 +12,163 @@
 
   <h1>Project 2: Web Service | Report</h1>
 
-  <!-- CHANGE photo to something like foto or media instead -->
-
-  <p>Here's a general overview of using this web service:
+  <p>Here's a general overview of the functionallity of this web service:
   </p>
   <p>Endpoints:
     <ul>
       <li>
-	GET	/photos/:month/:day - returns photos found on the given month and day. Entries are ordered by year.
+	<b>GET		/photos</b> - returns ALL photos
       </li>
       <li>
-	POST	/photos - adds a word with the given identification options [POST must include the following identification options: year (INT), month (INT), day (INT), image name (TEXT), image source/link (TEXT), and the image description (TEXT)]
+	<b>GET		/photos/:month/:year</b> - returns photos for the given month (INT) and year (INT). 
+			Entries are ordered by day.
       </li>
       <li>
-	PATCH	/photos/:id - updates a word with the given identification number (INT)
+	<b>GET		/photos/:month/:day/:year</b> - returns photos found on the given month (INT), day (INT), 
+			and year (INT). Entries are ordered by year.
       </li>
       <li>
-	DELETE   /photos/:id - removes a photo based on the given ID (INT). NOTE: This will HARD DELETE the photo.
+	<b>POST		/photos</b> - adds a word with the given identification options [POST must include the
+			following identification options: year (INT), month (INT), day (INT), image name (TEXT),
+			image source/link (TEXT), and the image description (TEXT)]
+      </li>
+      <li>
+	<b>PATCH	/photos/:id</b> - updates a word with the given identification number (INT)
+      </li>
+      <li>
+	<b>DELETE   	/photos/:id</b> - soft delete a photo based on the given ID (INT)
+      </li>
+      <li>
+	<b>DELETE   	/photos/:id/:month/:day/:year</b> - removes a photo based on the given ID (INT), month (INT),
+			day (INT), and year (INT). NOTE: This will HARD DELETE the photo.
       </li>
     </ul>
   </p>
 
   <p>The following are a couple examples of using the endpoints with CURL and on the browser:
   </p>
-  <p>GET:	
-  curl --location --request GET 'https://project2.bradfell.me:8443/photos/9/3'	https://project2.bradfell.me:8443/photos/9/3
+  <p><i>NOTE: These examples all use the same image with the ID of 1. In order to GET, PATCH, DELETE, the image must
+	  be present (add with POST).</i>
   </p>
-  <p>POST:	
-  curl --header 'Content-Type: application/json' --data '{"year": 2021, "month": 9, "day": 3, "imgName": "Blood Red Sun", "imgLink": "https://drive.google.com/file/d/1hjfFgMcH8piJokyYjtjWgyL1lPUUosLq/view?usp=sharing", "imgDesc": "A pretty red and rad sun resting above the mountain line at dusk."}' http://bradfell.me:5001/photos
-  </p>
-  <p>PATCH:
-   curl --header 'Content-Type: application/json' --request PATCH --data '{"year": 2021, "month": 8, "day": 31, "imgName": "The Red Ball in the Sky", "imgLink": "https://drive.google.com/file/d/1hjfFgMcH8piJokyYjtjWgyL1lPUUosLq/view?usp=sharing", "imgDesc": "This sun looks a red ball XD"}' https://project2.bradfell.me:8443/photos/1
-  </p>
-  <p>DELETE:
-  curl --request DELETE https://project2.bradfell.me:8443/photos/1
-  </p>
+  <ul>
+    <li>
+      <p><b>GET</b> ALL: curl --location --request GET 'https://project2.bradfell.me:8443/photos'</p>
+      <p>Or access by browser by "https://project2.bradfell.me:8443/photos"</p>
+    </li>
+    <li>
+      <p><b>GET</b> BY MONTH: curl --location --request GET 'https://project2.bradfell.me:8443/photos/9/2021'</p>
+      <p>Or access by browser by "https://project2.bradfell.me:8443/photos/9/2021"</p>
+    </li>
+    <li>
+      <p><b>GET</b> BY PHOTO: curl --location --request GET 'https://project2.bradfell.me:8443/photos/9/3/2021'</p>
+      <p>Or access by browser by "https://project2.bradfell.me:8443/photos/9/3/2021"</p>
+    </li>
+    <li>
+      <p><b>POST</b>: curl --header 'Content-Type: application/json' --data '{"year": 2021, "month": 9, "day": 3, 
+      "imgName": "Blood Red Sun", "imgLink": 
+      "https://drive.google.com/file/d/1hjfFgMcH8piJokyYjtjWgyL1lPUUosLq/view?usp=sharing", "imgDesc": "A pretty red
+      and rad sun resting above the mountain line at dusk."}' http://bradfell.me:5001/photos
+      </p>
+    </li>
+    <li>
+      <p><b>PATCH</b>: curl --header 'Content-Type: application/json' --request PATCH --data '{"year": 2021, "month": 8,
+      "day": 31, "imgName": "The Red Ball in the Sky", "imgLink":
+      "https://drive.google.com/file/d/1hjfFgMcH8piJokyYjtjWgyL1lPUUosLq/view?usp=sharing", "imgDesc": "This sun looks 
+      a red ball XD"}' https://project2.bradfell.me:8443/photos/1
+      </p>
+    </li>
+    <li>
+      <p><b>(SOFT) DELETE</b>: curl --request DELETE https://project2.bradfell.me:8443/photos/1
+      </p>
+    </li>
+    <li>
+      <p><b>(HARD) DELETE</b>: curl --request DELETE https://project2.bradfell.me:8443/photos/1/9/3/2021
+      </p>
+    </li>
+  </ul>
 
   <p>
     Below are listed goals and tasks for this project and how they were completed:
   </p>
   <ol>
     <li>
-      <b>Your service will not manage a to-do list.</b>
-      This service is far from a to-do list. It's a media sharing and rating service, known as Ufotomi!
-
-      Creators can share their creations by providing the source link (from external site at this point), a name, as well as a description of their photo or other media form. From here, users can rate them on an Awesome, Nice, Meh, and Boo scale. This service has a specific focus to the creator /"influencer" audience as a new platform for sharing media, but also to those who want to be entertained or review creators material.
+      <p><b>Your service will not manage a to-do list.</b></p>
+      <p>This service is far from a to-do list. It's a media sharing and rating service, known as Ufotomi!</p>
+      <p>Creators can share their creations by providing the source link (from external site at this point), a name, 
+      as well as a description of their photo or other media form. This service has a specific focus to the creator 
+      /"influencer" audience as a new platform for sharing media, but also to those who want to be entertained or 
+      review creators material.</p>
     </li>
     <li>
-      <b>You will store your app’s data long-term in an SQL-based relational database like MySQL. (Despite using a relational database, your database need not have multiple tables.)</b>
-      MySQL was installed and set-up for the service.
+      <p><b>You will store your app’s data long-term in an SQL-based relational database like MySQL. (Despite using 
+	      a relational database, your database need not have multiple tables.)</b></p>
+      <p>MySQL was installed and set-up for the service.</p>
     </li>
     <li>
-      <b>You will provide an Express-based web service for interacting with the database.</b>
-      Express has been configured into this project from the beginning.
+      <p><b>You will provide an Express-based web service for interacting with the database.</b></p>
+      <p>Express has been configured into this project from the beginning.</p>
     </li>
     <li>
-      <b>Your web service will be available via https://project2.YOUR-DOMAIN-NAME:8443/.</b>
-      The web service is viewable through the suggested link: <a href="https://project2.bradfell.me:8443/">https://project2.bradfell.me:8443/</a>.
+      <p><b>Your web service will be available via https://project2.YOUR-DOMAIN-NAME:8443/.</b></p>
+      <p>The web service is viewable through the suggested link: <a href="https://project2.bradfell.me:8443/">
+	      https://project2.bradfell.me:8443/</a>.</p>
     </li>
     <li>
-      <b>The endpoints of the web service and any parameters must be appropriately named.</b>
-      The endpoints are named in relation to the project and follow common web service etiquette. See the full list of endpoints at the top of this page.
+      <p><b>The endpoints of the web service and any parameters must be appropriately named.</b></p>
+      <p>The endpoints are named in relation to the project and follow common web service etiquette. See the full 
+      list of endpoints at the top of this page.</p>
     </li>
     <li>
-      <b>The web service must send and receive complex data as JSON.</b>
-      The web service suports the given prompt - sending and receiving Ufotomi media through JSON format.
+      <p><b>The web service must send and receive complex data as JSON.</b></p>
+      <p>The web service suports the given prompt - sending and receiving Ufotomi media through JSON format.</p>
     </li>
     <li>
-      <b>The full spectrum of CRUD operations must be supported.</b>
-      Ufotomi has the full support for CRUD operations - GET, POST, PATCH, and DELETE. See the full list of available endpoint at the top of this page.
+      <p><b>The full spectrum of CRUD operations must be supported.</b></p>
+      <p>Ufotomi has the full support for CRUD operations - GET, POST, PATCH, and DELETE. See the full list of 
+      available endpoint at the top of this page.</p>
     </li>
     <li>
-      <b>The database must only be directly accessible from within your droplet, and not from outside. Use ufw to block all ports but the ones you need for SSH and your allowed web servers.</b>
-    Outside clients are blocked with the Linux firewall: Uncomplicated Firewall (ufw). Traffic is allowed through the ports Apache and Nginx listen to: 22, 80, 443, and 8443.
+      <p><b>The database must only be directly accessible from within your droplet, and not from outside. Use ufw 
+	      to block all ports but the ones you need for SSH and your allowed web servers.</b></p>
+      <p>Outside clients are blocked with the Linux firewall: Uncomplicated Firewall (ufw). Traffic is allowed 
+      through the ports Apache and Nginx listen to: 22, 80, 443, and 8443.</p>
     </li>
     <li>
-      <b>You will create an Nginx server that allows global, encrypted access to your web service.</b>
-      Ufotomi was set-up with Nginx in mind and all traffic is redirected to encrypted access accordingly with Nginx.
+      <p><b>You will create an Nginx server that allows global, encrypted access to your web service.</b></p>
+      <p>Ufotomi was set-up with Nginx in mind and all traffic is redirected to encrypted access accordingly with 
+      Nginx.</p>
     </li>
     <li>
-      <b>The web service must support cross-origin resource sharing using custom middleware and an options wildcard endpoint.</b>
-      Ufotomi supports cross-origin resource sharing and an options wildcard endpoint.
+      <p><b>The web service must support cross-origin resource sharing using custom middleware and an options wildcard 
+	      endpoint.</b></p>
+      <p>Ufotomi supports cross-origin resource sharing and an options wildcard endpoint.</p>
     </li>
     <li>
-      <b>Your web service must be started using a process manager like pm2 so that it stays running.</b>
-      pm2 manages this project making sure it's consistently running.
+      <p><b>Your web service must be started using a process manager like pm2 so that it stays running.</b></p>
+      <p>pm2 manages this project making sure it's consistently running.</p>
     </li>
     <li>
-      <b>Your service must be stored in a Git repository that you have shared with your instructor. On GitHub, GitLab, and Bitbucket, share with the user twodee.</b>
-      The project is stored in the Git repository: <a href="https://github.com/Bronstrom/CS347-web-service">Bronstrom/CS347-web-service</a> and added twodee (Chris Johnson) as a collaborator.
+      <p><b>Your service must be stored in a Git repository that you have shared with your instructor. On GitHub, 
+	      GitLab, and Bitbucket, share with the user twodee.</b></p>
+      <p>The project is stored in the Git repository: <a href="https://github.com/Bronstrom/CS347-web-service">
+	      Bronstrom/CS347-web-service</a> and added twodee (Chris Johnson) as a collaborator.</p>
     </li>
     <li>
-      <b>Your database’s creation and schema scripts must be included in your repository. Passwords must not be included.</b>
-      The required database scripts are included in the provided repo. Credential passwords (credential.json) are excluded as indicated by <i>.gitignore</i>.
+      <p><b>Your database’s creation and schema scripts must be included in your repository. Passwords must not be 
+	      included.</b></p>
+      <p>The required database scripts are included in the provided repo. Credential passwords (credential.json) are 
+      excluded as indicated by <i>.gitignore</i>.</p>
     </li>
     <li>
-      <b>Your Git repository should show a steady flow of commits over the course of the project. Committing and pushing should happen steadily, after each work session, and not just right before the due date.</b>
-      Commits have been spread out over the course of days, and not just before the due date
+      <p><b>Your Git repository should show a steady flow of commits over the course of the project. Committing and 
+	      pushing should happen steadily, after each work session, and not just right before the due date.</b></p>
+      <p>Commits have been spread out over the course of days, and not just before the due date.</p>
     </li>
     <li>
-      <b>Have your service respond to https://project2.YOUR-DOMAIN-NAME:8443/report.html by sending back an HTML page with brief report containing an itemized breakdown of how you believe you have met the expectations listed above.</b>
-      If you're reading this on <a href="https://project2.bradfell.me:8443/report.html">https://project2.bradfell.me:8443/report.html</a>, then this part works as intended.
+      <p><b>Have your service respond to https://project2.YOUR-DOMAIN-NAME:8443/report.html by sending back an HTML 
+	      page with brief report containing an itemized breakdown of how you believe you have met the expectations listed above.</b></p>
+      <p>If you're reading this on <a href="https://project2.bradfell.me:8443/report.html">
+	      https://project2.bradfell.me:8443/report.html</a>, then this part works as intended.</p>
     </li>
   </ol>
 
