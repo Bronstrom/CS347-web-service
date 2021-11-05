@@ -19,20 +19,34 @@
   <p>Endpoints:
     <ul>
       <li>
-	GET	/photos/:month/:day - returns photos found on the given month and day. Entries are ordered by year
+	GET	/photos/:month/:day - returns photos found on the given month and day. Entries are ordered by year.
       </li>
       <li>
-	POST	/photos - adds a word with the given identification options (year, month, day, image name, image source/link, and the image description
+	POST	/photos - adds a word with the given identification options [POST must include the following identification options: year (INT), month (INT), day (INT), image name (TEXT), image source/link (TEXT), and the image description (TEXT)]
       </li>
       <li>
-	PATCH	/photos/:id - updates a word with the given identification options
+	PATCH	/photos/:id - updates a word with the given identification number (INT)
       </li>
       <li>
-	DELETE   /photos/:id - removes a photo based on the given ID (HARD DELETE)
+	DELETE   /photos/:id - removes a photo based on the given ID (INT). NOTE: This will HARD DELETE the photo.
       </li>
     </ul>
   </p>
 
+  <p>The following are a couple examples of using the endpoints with CURL and on the browser:
+  </p>
+  <p>GET:	
+  curl --location --request GET 'https://project2.bradfell.me:8443/photos/9/3'	https://project2.bradfell.me:8443/photos/9/3
+  </p>
+  <p>POST:	
+  curl --header 'Content-Type: application/json' --data '{"year": 2021, "month": 9, "day": 3, "imgName": "Blood Red Sun", "imgLink": "https://drive.google.com/file/d/1hjfFgMcH8piJokyYjtjWgyL1lPUUosLq/view?usp=sharing", "imgDesc": "A pretty red and rad sun resting above the mountain line at dusk."}' http://bradfell.me:5001/photos
+  </p>
+  <p>PATCH:
+   curl --header 'Content-Type: application/json' --request PATCH --data '{"year": 2021, "month": 8, "day": 31, "imgName": "The Red Ball in the Sky", "imgLink": "https://drive.google.com/file/d/1hjfFgMcH8piJokyYjtjWgyL1lPUUosLq/view?usp=sharing", "imgDesc": "This sun looks a red ball XD"}' https://project2.bradfell.me:8443/photos/1
+  </p>
+  <p>DELETE:
+  curl --request DELETE https://project2.bradfell.me:8443/photos/1
+  </p>
 
   <p>
     Below are listed goals and tasks for this project and how they were completed:
@@ -49,7 +63,7 @@
       MySQL was installed and set-up for the service.
     </li>
     <li>
-      <b>You will store your app’s data long-term in an SQL-based relational database like MySQL. (Despite using a relational database, your database need not have multiple tables.)</b>
+      <b>You will provide an Express-based web service for interacting with the database.</b>
       Express has been configured into this project from the beginning.
     </li>
     <li>
@@ -78,6 +92,7 @@
     </li>
     <li>
       <b>The web service must support cross-origin resource sharing using custom middleware and an options wildcard endpoint.</b>
+      Ufotomi supports cross-origin resource sharing and an options wildcard endpoint.
     </li>
     <li>
       <b>Your web service must be started using a process manager like pm2 so that it stays running.</b>
@@ -89,6 +104,7 @@
     </li>
     <li>
       <b>Your database’s creation and schema scripts must be included in your repository. Passwords must not be included.</b>
+      The required database scripts are included in the provided repo. Credential passwords (credential.json) are excluded as indicated by <i>.gitignore</i>.
     </li>
     <li>
       <b>Your Git repository should show a steady flow of commits over the course of the project. Committing and pushing should happen steadily, after each work session, and not just right before the due date.</b>

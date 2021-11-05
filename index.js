@@ -19,6 +19,14 @@ connection.connect(error => {
   }
 });
 
+// Allow cross-origin resource sharing
+service.use((request, response, next) => {
+  response.set('Access-Control-Allow-Origin', '*');
+  next();
+});
+
+
+
 // Provides a complete row for a photo
 function rowToPhoto(row) {
   return {
@@ -33,6 +41,7 @@ function rowToPhoto(row) {
     nice:	row.nice,
     meh: 	row.meh,
     boo:	row.boo,
+   is_deleted:  row.is_deleted;
   }
 }
 
@@ -41,15 +50,71 @@ function rowToPhoto(row) {
 /* ENDPOINTS */
 
 
-// Select/Get
-service.get('/photos/:month/:day', (request, response) => {
+// Options wildcard
+service.options('*', (request, response) => {
+  response.set('Access-Control-Allow-Headers', 'Content-Type');
+  response.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+  response.sendStatus(200);
+});
+
+
+// Select/Get ALL photos
+service.get('/photos', (request, response) => {
+  const query = 'SELECT * FROM photo WHERE is_deleted = 0 ORDER BY year DESC, month DESC, day DESC';
+  // Grab photos in database if existant
+  connection.query(query, parameters, (error, rows) => {
+    if (error) {
+      response.status(500);
+      response.json({
+        ok: false,
+        results: error.message,
+      });
+    } else {
+      const photos = rows.map(rowToPhoto);
+      response.json({
+        ok: true,
+        results: rows.map(rowToPhoto),
+      });
+    }
+  });
+});
+
+// Select/Get for a specific MONTH of a year
+service.get('/photos/:month/:year', (request, response) => {
   const parameters = [
+    parseInt(request.params.year),
+    parseInt(request.params.month),
+  ];
+
+  const query = 'SELECT * FROM photo WHERE year = ? AND month = ? AND is_deleted = 0 ORDER BY day DESC';
+  // Grab photos in database if existant
+  connection.query(query, parameters, (error, rows) => {
+    if (error) {
+      response.status(500);
+      response.json({
+        ok: false,
+        results: error.message,
+      });
+    } else {
+      const photos = rows.map(rowToPhoto);
+      response.json({
+        ok: true,
+        results: rows.map(rowToPhoto),
+      });
+    }
+  });
+});
+
+
+// Select/Get for a specific DAY
+service.get('/photos/:month/:day/:year', (request, response) => {
+  const parameters = [
+    parseInt(request.params.year),
     parseInt(request.params.month),
     parseInt(request.params.day),
   ];
 
-  // TODO: ADD IS DELETE
-  const query = 'SELECT * FROM photo WHERE month = ? AND day = ? ORDER BY year DESC';
+  const query = 'SELECT * FROM photo WHERE year = ? AND month = ? AND day = ? AND is_deleted = 0';
   // Grab photos in database if existant
   connection.query(query, parameters, (error, rows) => {
     if (error) {
@@ -106,7 +171,8 @@ service.post('/photos', (request, response) => {
     response.status(400);
     response.json({
       ok: false,
-      results: 'Incomplete photo.',
+      results: 'Incomplete photo. The following must be included for a photo: year (INT), '
+	    + 'month (INT), day (INT), imgName (TXT), imgLink (TXT), imgDesc (TXT).',
     });
   }
 });
@@ -115,6 +181,7 @@ service.post('/photos', (request, response) => {
 // Update
 service.patch('/photos/:id', (request, response) => {
   const parameters = [
+    parseInt(request.params.id),
     request.body.year,
     request.body.month,
     request.body.day,
@@ -123,7 +190,7 @@ service.patch('/photos/:id', (request, response) => {
     request.body.imgDesc,
   ];
 
-  const query = 'UPDATE photo SET year = ?, month = ?, day = ?, imgName = ?, imgLink = ?, imgDesc = ?';
+  const query = 'UPDATE photo WHERE id = ? AND SET year = ?, month = ?, day = ?, imgName = ?, imgLink = ?, imgDesc = ?';
   connection.query(query, parameters, (error, result) => {
     if (error) {
       response.status(404);
@@ -139,12 +206,34 @@ service.patch('/photos/:id', (request, response) => {
   });
 });
 
-
-// Hard delete
+// Soft delete
 service.delete('/photos/:id', (request, response) => {
   const parameters = [parseInt(request.params.id)];
 
-  // TODO: Implement "... photo SET is_deleted = 1 ..."
+  const query = 'UPDATE photo SET is_deleted = 1 WHERE id = ?';
+  connection.query(query, parameters, (error, result) => {
+    if (error) {
+      response.status(404);
+      response.json({
+        ok: false,
+        results: error.message,
+      });
+    } else {
+      response.json({
+        ok: true,
+      });
+    }
+  });
+});
+
+// Hard delete - requests month & day to ensure user wants to delete
+service.delete('/photos/:id/:month/:day', (request, response) => {
+  const parameters = [
+	parseInt(request.params.id),
+  	parseInt(request.params.month),
+	parseInt(request.params.day),
+  ];
+
   const query = 'DELETE FROM photo WHERE id = ?';
   connection.query(query, parameters, (error, result) => {
     if (error) {
