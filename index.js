@@ -37,10 +37,12 @@ function rowToPhoto(row) {
     imgName:	row.imgName,
     imgLink:	row.imgLink,
     imgDesc:	row.imgDesc,
-    awesome:	row.awesome,
+    tag:	row.tag,
+    amazing:	row.amazing,
     nice:	row.nice,
     meh: 	row.meh,
     boo:	row.boo,
+    popRate:    row.popRate,
     is_deleted: row.is_deleted,
   }
 }
@@ -75,7 +77,7 @@ service.get('/photos', (request, response) => {
       const photos = rows.map(rowToPhoto);
       response.json({
         ok: true,
-        results: rows.map(rowToPhoto),
+        results: photos,
       });
     }
   });
@@ -101,7 +103,7 @@ service.get('/photos/:month/:year', (request, response) => {
       const photos = rows.map(rowToPhoto);
       response.json({
         ok: true,
-        results: rows.map(rowToPhoto),
+        results: photos,
       });
     }
   });
@@ -129,11 +131,62 @@ service.get('/photos/:month/:day/:year', (request, response) => {
       const photos = rows.map(rowToPhoto);
       response.json({
         ok: true,
-        results: rows.map(rowToPhoto),
+        results: photos,
       });
     }
   });
 });
+
+// Get photo with ID
+service.get('/photos/:id', (request, response) => {
+  const parameters = [
+    parseInt(request.params.id),
+  ];
+
+  const query = 'SELECT * FROM photo WHERE id = ? AND is_deleted = 0';
+  // Grab photos in database if existant
+  connection.query(query, parameters, (error, rows) => {
+    if (error) {
+      response.status(500);
+      response.json({
+        ok: false,
+        results: error.message,
+      });
+    } else {
+      const photos = rows.map(rowToPhoto);
+      response.json({
+        ok: true,
+        results: photos,
+      });
+    }
+  });
+});
+
+// Get all photos with a certain tag
+service.get('/tag/:tag', (request, response) => {
+  const parameters = [
+    request.params.tag,
+  ];
+
+  const query = 'SELECT * FROM photo WHERE tag = ? AND is_deleted = 0';
+  // Grab photos in database if existant
+  connection.query(query, parameters, (error, rows) => {
+    if (error) {
+      response.status(500);
+      response.json({
+        ok: false,
+        results: error.message,
+      });
+    } else {
+      const photos = rows.map(rowToPhoto);
+      response.json({
+        ok: true,
+        results: photos,
+      });
+    }
+  });
+});
+
 
 
 // Insert/Post
@@ -143,7 +196,8 @@ service.post('/photos', (request, response) => {
       request.body.hasOwnProperty('day') &&
       request.body.hasOwnProperty('imgName') &&
       request.body.hasOwnProperty('imgLink') &&
-      request.body.hasOwnProperty('imgDesc')) {
+      request.body.hasOwnProperty('imgDesc') &&
+      request.body.hasOwnProperty('tag')) {
 
     const parameters = [
       request.body.year,
@@ -152,8 +206,9 @@ service.post('/photos', (request, response) => {
       request.body.imgName,
       request.body.imgLink,
       request.body.imgDesc,
+      request.body.tag,
     ];
-    const query = 'INSERT INTO photo(year, month, day, imgName, imgLink, imgDesc) VALUES (?, ?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO photo(year, month, day, imgName, imgLink, imgDesc, tag) VALUES (?, ?, ?, ?, ?, ?, ?)';
     connection.query(query, parameters, (error, result) => {
       if (error) {
         response.status(500);
@@ -174,25 +229,27 @@ service.post('/photos', (request, response) => {
     response.json({
       ok: false,
       results: 'Incomplete photo. The following must be included for a photo: year (INT), '
-	    + 'month (INT), day (INT), imgName (TXT), imgLink (TXT), imgDesc (TXT).',
+	    + 'month (INT), day (INT), imgName (TXT), imgLink (TXT), imgDesc (TXT), tag (TXT).',
     });
   }
 });
 
 
-// Update
+
+// Update - Edit complete photo
 service.patch('/photos/:id', (request, response) => {
   const parameters = [
-    parseInt(request.params.id),
     request.body.year,
     request.body.month,
     request.body.day,
     request.body.imgName,
     request.body.imgLink,
     request.body.imgDesc,
+    request.body.tag,
+    parseInt(request.params.id),
   ];
 
-  const query = 'UPDATE photo WHERE id = ? AND SET year = ?, month = ?, day = ?, imgName = ?, imgLink = ?, imgDesc = ?';
+  const query = 'UPDATE photo SET year = ?, month = ?, day = ?, imgName = ?, imgLink = ?, imgDesc = ?, tag = ? WHERE id = ?';
   connection.query(query, parameters, (error, result) => {
     if (error) {
       response.status(404);
@@ -207,6 +264,97 @@ service.patch('/photos/:id', (request, response) => {
     }
   });
 });
+
+// Update - Amazings
+service.patch('/:id/amazing', (request, response) => {
+  const parameters = [
+    parseInt(request.params.id),
+  ];
+
+  const query = 'UPDATE photo SET amazing = amazing + 1, popRate = popRate + 2 WHERE id = ?';
+  connection.query(query, parameters, (error, result) => {
+    if (error) {
+      response.status(404);
+      response.json({
+        ok: false,
+        results: error.message,
+      });
+    } else {
+      response.json({
+        ok: true,
+      });
+    }
+  });
+});
+
+// Update - Nices
+service.patch('/:id/nice', (request, response) => {
+  const parameters = [
+    parseInt(request.params.id),
+  ];
+
+  const query = 'UPDATE photo SET nice = nice + 1, popRate = popRate + 1 WHERE id = ?';
+  connection.query(query, parameters, (error, result) => {
+    if (error) {
+      response.status(404);
+      response.json({
+        ok: false,
+        results: error.message,
+      });
+    } else {
+      response.json({
+        ok: true,
+      });
+    }
+  });
+});
+
+// Update - Mehs
+service.patch('/:id/meh', (request, response) => {
+  const parameters = [
+    parseInt(request.params.id),
+  ];
+
+  const query = 'UPDATE photo SET meh = meh + 1 WHERE id = ?';
+  connection.query(query, parameters, (error, result) => {
+    if (error) {
+      response.status(404);
+      response.json({
+        ok: false,
+        results: error.message,
+      });
+    } else {
+      response.json({
+        ok: true,
+      });
+    }
+  });
+});
+
+// Update - Boos
+service.patch('/:id/boo', (request, response) => {
+  const parameters = [
+    parseInt(request.params.id),
+  ];
+
+  const query = 'UPDATE photo SET boo = boo + 1, popRate = popRate - 2 WHERE id = ?';
+  connection.query(query, parameters, (error, result) => {
+    if (error) {
+      response.status(404);
+      response.json({
+        ok: false,
+        results: error.message,
+      });
+    } else {
+      response.json({
+        ok: true,
+      });
+    }
+  });
+});
+
+
+
 
 // Soft delete
 service.delete('/photos/:id', (request, response) => {
@@ -252,6 +400,7 @@ service.delete('/photos/:id/:month/:day/:year', (request, response) => {
     }
   });
 });
+
 
 
 // Provide report through GET endpoint
